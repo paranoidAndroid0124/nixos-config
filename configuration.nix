@@ -178,6 +178,7 @@ in
 
       # Run git commands as vincent user
       ${pkgs.sudo}/bin/sudo -u vincent ${pkgs.bash}/bin/bash << EOSCRIPT
+        export PATH=${pkgs.openssh}/bin:${pkgs.git}/bin:\$PATH
         cd /home/vincent/nixos-config
 
         # Check if there are any changes
