@@ -176,15 +176,19 @@ in
       # Change ownership to vincent
       ${pkgs.coreutils}/bin/chown -R vincent:users /home/vincent/nixos-config
 
-      # Commit and push if there are changes
-      cd /home/vincent/nixos-config
-      if ! ${pkgs.git}/bin/git diff --quiet; then
-        ${pkgs.git}/bin/git add -A
-        ${pkgs.git}/bin/git commit -m "Auto-backup after nixos-rebuild: $(${pkgs.coreutils}/bin/date '+%Y-%m-%d %H:%M:%S')" || true
-        ${pkgs.git}/bin/git push origin master || echo "Failed to push to GitHub (check network/auth)"
-      else
-        echo "No changes to commit."
-      fi
+      # Run git commands as vincent user
+      ${pkgs.sudo}/bin/sudo -u vincent ${pkgs.bash}/bin/bash -c '
+        cd /home/vincent/nixos-config
+
+        # Check if there are any changes
+        if ! ${pkgs.git}/bin/git diff --quiet || ! ${pkgs.git}/bin/git diff --cached --quiet; then
+          ${pkgs.git}/bin/git add -A
+          ${pkgs.git}/bin/git commit -m "Auto-backup after nixos-rebuild: $(${pkgs.coreutils}/bin/date '+%Y-%m-%d %H:%M:%S')"
+          ${pkgs.git}/bin/git push origin master || echo "Failed to push to GitHub (check network/auth)"
+        else
+          echo "No changes to commit."
+        fi
+      '
     '';
     deps = [];
   };
