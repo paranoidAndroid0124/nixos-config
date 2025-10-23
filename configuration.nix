@@ -240,6 +240,7 @@ EOSCRIPT
     cmake
     gcc
     gnumake
+    gh
     pkg-config
     file
     claude-code-latest
