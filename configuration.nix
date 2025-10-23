@@ -163,6 +163,33 @@ in
   virtualisation.docker.enable = true;
 
   # ============================================================================
+  # AUTO-BACKUP CONFIGURATION TO GITHUB
+  # ============================================================================
+
+  system.activationScripts.backup-nixos-config = {
+    text = ''
+      echo "Backing up NixOS configuration to ~/nixos-config..."
+
+      # Copy configuration files
+      ${pkgs.rsync}/bin/rsync -av /etc/nixos/*.nix /home/vincent/nixos-config/ || true
+
+      # Change ownership to vincent
+      ${pkgs.coreutils}/bin/chown -R vincent:users /home/vincent/nixos-config
+
+      # Commit and push if there are changes
+      cd /home/vincent/nixos-config
+      if ! ${pkgs.git}/bin/git diff --quiet; then
+        ${pkgs.git}/bin/git add -A
+        ${pkgs.git}/bin/git commit -m "Auto-backup after nixos-rebuild: $(${pkgs.coreutils}/bin/date '+%Y-%m-%d %H:%M:%S')" || true
+        ${pkgs.git}/bin/git push origin master || echo "Failed to push to GitHub (check network/auth)"
+      else
+        echo "No changes to commit."
+      fi
+    '';
+    deps = [];
+  };
+
+  # ============================================================================
   # PROGRAMS
   # ============================================================================
 
