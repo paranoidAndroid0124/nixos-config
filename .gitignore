@@ -1,0 +1,9 @@
+# NixOS build results
+result
+result-*
+
+# Editor files
+*.swp
+*.swo
+*~
+.DS_Store
