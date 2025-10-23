@@ -250,6 +250,7 @@ EOSCRIPT
     curl
     curl.dev
     unzip
+    btop
     htop
     nvtopPackages.full
     nload
