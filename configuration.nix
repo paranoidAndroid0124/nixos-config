@@ -257,6 +257,7 @@ EOSCRIPT
     nload
     zoxide
     fastfetch
+    ripgrep
 
     # Libraries
     asio
